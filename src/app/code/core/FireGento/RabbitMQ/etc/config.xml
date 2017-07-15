@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * This file is part of a FireGento e.V. module.
+ *
+ * This FireGento e.V. module is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License version 3 as
+ * published by the Free Software Foundation.
+ *
+ * This script is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * PHP version 5
+ *
+ * @category  FireGento
+ * @package   FireGento_RabbitMQ
+ * @author    FireGento Team <team@firegento.com>
+ * @copyright 2017 FireGento Team (http://www.firegento.com)
+ * @license   http://opensource.org/licenses/gpl-3.0 GNU General Public License, version 3 (GPLv3)
+ */
+-->
+<config>
+    <modules>
+        <FireGento_RabbitMQ>
+            <version>1.0.0</version>
+        </FireGento_RabbitMQ>
+    </modules>
+    <global>
+        <blocks>
+            <rabbitmq>
+                <class>FireGento_RabbitMQ_Block</class>
+            </rabbitmq>
+        </blocks>
+        <helpers>
+            <rabbitmq>
+                <class>FireGento_RabbitMQ_Helper</class>
+            </rabbitmq>
+        </helpers>
+        <models>
+            <rabbitmq>
+                <class>FireGento_RabbitMQ_Model</class>
+            </rabbitmq>
+        </models>
+        <cache>
+            <types>
+                <rabbitmq module="rabbitmq" translate="label description">
+                    <label>RABBITMQ</label>
+                    <description>RABBITMQ queues and exchanges definitions</description>
+                    <tags>RABBITMQ</tags>
+                </rabbitmq>
+            </types>
+        </cache>
+        <events>
+            <!-- collect objects whenever a model is saved -->
+            <model_save_commit_after>
+                <observers>
+                    <rabbitmq_model_save_commit_after>
+                        <type>singleton</type>
+                        <class>rabbitmq/observer</class>
+                        <method>collect</method>
+                    </rabbitmq_model_save_commit_after>
+                </observers>
+            </model_save_commit_after>
+            <!-- collect objects whenever a model is deleted -->
+            <model_delete_commit_after>
+                <observers>
+                    <rabbitmq_model_delete_commit_after>
+                        <type>singleton</type>
+                        <class>rabbitmq/observer</class>
+                        <method>collect</method>
+                    </rabbitmq_model_delete_commit_after>
+                </observers>
+            </model_delete_commit_after>
+            <!-- produce topics and data for collected events -->
+            <controller_front_send_response_after>
+                <observers>
+                    <rabbitmq_controller_front_send_response_after>
+                        <type>singleton</type>
+                        <class>rabbitmq/observer</class>
+                        <method>publish</method>
+                    </rabbitmq_controller_front_send_response_after>
+                </observers>
+            </controller_front_send_response_after>
+            <!-- produce topics and data for collected events -->
+            <!--
+            <controller_response_redirect>
+                <observers>
+                    <rabbitmq_controller_response_redirect>
+                        <type>singleton</type>
+                        <class>rabbitmq/entity_event_observer</class>
+                        <method>onControllerFrontSendResponseAfter</method>
+                    </rabbitmq_controller_response_redirect>
+                </observers>
+            </controller_response_redirect>
+            -->
+        </events>
+    </global>
+    <!-- config options -->
+    <rabbitmq>
+        <default_publisher>magento_default_event_producer</default_publisher>
+        <collectors>
+            <!-- define event collectors -->
+        </collectors>
+        <producers>
+            <!-- define message producers -->
+        </producers>
+        <sequence>
+            <customer>
+                <class>Mage_Customer_Model_Customer</class>
+                <before>Mage_Customer_Model_Address</before>
+            </customer>
+            <customer_address>
+                <class>Mage_Customer_Model_Address</class>
+                <after>Mage_Customer_Model_Customer</after>
+            </customer_address>
+        </sequence>
+    </rabbitmq>
+</config>

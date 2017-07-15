@@ -1,0 +1,3 @@
+src/app/etc/modules/FireGento_RabbitMQ.xml                app/etc/modules/FireGento_RabbitMQ.xml
+src/app/code/core/FireGento/RabbitMQ                      app/code/community/FireGento/RabbitMQ
+src/shell/consumer.php                                    shell/consumer.php
